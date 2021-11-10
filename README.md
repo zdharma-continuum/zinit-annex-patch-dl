@@ -1,7 +1,7 @@
 ## Introduction
 
 A Zsh-Zinit extension (i.e. an
-[annex](http://zdharma.org/zinit/wiki/Annexes/)) that downloads files and
+[annex](https://zdharma-continuum.github.io/zinit/wiki/Annexes/)) that downloads files and
 applies patches. It adds two ice modifiers:
 
 ```zsh
