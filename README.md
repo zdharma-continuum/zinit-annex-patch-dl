@@ -43,14 +43,14 @@ zinit load izmntuk/fbterm
 This command will result in:
 
 ![fbterm
-example](https://raw.githubusercontent.com/zinit-zsh/zinit-annex-patch-dl/master/images/fbterm-ex.png)
+example](https://raw.githubusercontent.com/zdharma-continuum/zinit-annex-patch-dl/master/images/fbterm-ex.png)
 
 ## Installation
 
 Simply load like a plugin, i.e. the following will add the annex to Zinit:
 
 ```zsh
-zinit light zinit-zsh/zinit-annex-patch-dl
+zinit light zdharma-continuum/zinit-annex-patch-dl
 ```
 
 After executing this command you can then use the `dl''` and `patch''` ice-mods.
