@@ -75,8 +75,8 @@ if [[ -n ${ICE[dl]} && ${ICE[dl]} != ink=[-/[:alnum:]]* ]]; then
 
     local ret=0
 
-    if (( !.zinit-annex-patch-dl-download-file-stdout "${srcdst[1]}" >! "$tdir/$tl" )); then
-      if (( !.zinit-annex-patch-dl-download-file-stdout "${srcdst[1]}" 1 >! "$tdir/$tl" )); then
+    if ! .zinit-annex-patch-dl-download-file-stdout "${srcdst[1]}" >! "$tdir/$tl"; then
+      if ! .zinit-annex-patch-dl-download-file-stdout "${srcdst[1]}" 1 >! "$tdir/$tl"; then
         print -P -- "%F{38}[patch-dl annex]: %F{160}Failed to download the URL %F{220}${srcdst[1]}%f"
         ret=1
       fi
