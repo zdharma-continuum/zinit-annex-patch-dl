@@ -1,3 +1,5 @@
+#!/usr/bin/env zsh
+#
 # In accordance with the Zsh Plugin Standard
 # https://zdharma-continuum.github.io/Zsh-100-Commits-Club/Zsh-Plugin-Standard.html
 
@@ -9,15 +11,15 @@ autoload -Uz za-patch-dl-handler
 # An empty stub to fill the help handler fields
 za-patch-dl-help-null-handler() { :; }
 
-# Register !atclone hook
+# Register the !atclone hook
 @zinit-register-annex "zinit-annex-patch-dl" hook:\!atclone-20 \
-  za-patch-dl-handler \
-  za-patch-dl-help-null-handler \
-  "dl''|patch''" # register a new ice-mod: test''
+    za-patch-dl-handler \
+    za-patch-dl-help-null-handler \
+    "dl''|patch''" # register a new ice-mod: test''
 
-# Register !atpull hook
+# Register the !atpull hook
 @zinit-register-annex "zinit-annex-patch-dl" hook:\!atpull-20 \
-  za-patch-dl-handler \
-  za-patch-dl-help-null-handler
+    za-patch-dl-handler \
+    za-patch-dl-help-null-handler
 
 # vim:ft=zsh:sw=2:sts=2:et
