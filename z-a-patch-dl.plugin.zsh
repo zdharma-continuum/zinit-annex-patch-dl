@@ -4,20 +4,24 @@
 0="${${ZERO:-${0:#$ZSH_ARGZERO}}:-${(%):-%N}}"
 0="${${(M)0:#/*}:-$PWD/$0}"
 
-autoload -Uz za-patch-dl-handler
+autoload -Uz \
+ :za-patch-dl::help-handler \
+ :za-patch-dl::file-handler
 
 # An empty stub to fill the help handler fields
-za-patch-dl-help-null-handler() { :; }
+:za-patch-dl::help-handler() { :; }
 
 # Register !atclone hook
-@zinit-register-annex "zinit-annex-patch-dl" hook:\!atclone-20 \
-  za-patch-dl-handler \
-  za-patch-dl-help-null-handler \
+@zinit-register-annex "zinit-annex-patch-dl" \
+  hook:\!atclone-20 \
+  :za-patch-dl::file-handler \
+  :za-patch-dl::help-handler \
   "dl''|patch''" # register a new ice-mod: test''
 
 # Register !atpull hook
-@zinit-register-annex "zinit-annex-patch-dl" hook:\!atpull-20 \
-  za-patch-dl-handler \
-  za-patch-dl-help-null-handler
+@zinit-register-annex "zinit-annex-patch-dl" \
+  hook:\!atpull-20 \
+  :za-patch-dl::file-handler \
+  :za-patch-dl::help-handler
 
-# vim:ft=zsh:sw=2:sts=2:et
+# vim: set expandtab filetype=zsh shiftwidth=2 softtabstop=2 tabstop=2:
