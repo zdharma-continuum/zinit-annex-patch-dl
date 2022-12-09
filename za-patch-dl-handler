@@ -7,10 +7,10 @@ else
   local type="$1" url="$2" id_as="$3" dir="$4"
 fi
 
-# FUNCTION: .zinit-annex-patch-dl-download-file-stdout {{{
+# FUNCTION: _zi::annex-patch-dl-download-file-stdout {{{
 # Downloads file to stdout. Used by snippet loading.
 # Supports following backend commands: curl, wget, lftp, lynx.
-.zinit-annex-patch-dl-download-file-stdout() {
+_zi::annex-patch-dl-download-file-stdout() {
   local url="$1" restart="$2"
 
   setopt localoptions localtraps
@@ -40,7 +40,7 @@ fi
     elif type lftp 2>/dev/null 1>&2; then
       command lftp -c "cat $url" || return 1
     else
-      .zinit-annex-patch-dl-download-file-stdout "$url" "1"
+      _zi::annex-patch-dl-download-file-stdout "$url" "1"
       return $?
     fi
   fi
@@ -59,11 +59,11 @@ if [[ -n ${ICE[dl]} && ${ICE[dl]} != ink=[-/[:alnum:]]* ]]; then
     hd="" tl=""
 
     if [[ -n ${srcdst[2]} ]]; then
-      @zinit-substitute 'srcdst[2]'
+      @zi::substitute 'srcdst[2]'
       hd="${srcdst[2]:h}"
       tl="${srcdst[2]:t}"
     else
-      @zinit-substitute 'srcdst[1]'
+      @zi::substitute 'srcdst[1]'
       hd="."
       tl="${${srcdst[1]%%\?*}:t}"
     fi
@@ -75,8 +75,8 @@ if [[ -n ${ICE[dl]} && ${ICE[dl]} != ink=[-/[:alnum:]]* ]]; then
 
     local ret=0
 
-    if ! .zinit-annex-patch-dl-download-file-stdout "${srcdst[1]}" >! "$tdir/$tl"; then
-      if ! .zinit-annex-patch-dl-download-file-stdout "${srcdst[1]}" 1 >! "$tdir/$tl"; then
+    if ! _zi::annex-patch-dl-download-file-stdout "${srcdst[1]}" >! "$tdir/$tl"; then
+      if ! _zi::annex-patch-dl-download-file-stdout "${srcdst[1]}" 1 >! "$tdir/$tl"; then
         print -P -- "%F{38}[patch-dl annex]: %F{160}Failed to download the URL %F{220}${srcdst[1]}%f"
         ret=1
       fi
@@ -95,7 +95,7 @@ if [[ -n "${ICE[patch]}" ]]; then
 
   local pch
   for pch ( $patches ) {
-    @zinit-substitute pch
+    @zi::substitute pch
 
     if (( !OPTS[opt_-q,--quiet] && ZINIT[annex-multi-flag:pull-active] == 2 )); then
       print -P -- "%F{38}[patch-dl annex]: %F{154}Applying patch %F{220}$pch...%f"
