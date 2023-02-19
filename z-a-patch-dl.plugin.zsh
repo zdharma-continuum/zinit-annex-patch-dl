@@ -17,11 +17,11 @@ za-patch-dl-help-null-handler() { :; }
   hook:\!atclone-20 \
   za-patch-dl-handler \
   za-patch-dl-help-null-handler \
-  "dl''|patch''" # register a new ice-mod: test''
+  "dl''|patch''"
 
 # Register !atpull hook
 @zinit-register-annex "zinit-annex-patch-dl" \
-  hook:\!atpull-20 \
+  hook:atpull-20 \
   za-patch-dl-handler \
   za-patch-dl-help-null-handler
 
