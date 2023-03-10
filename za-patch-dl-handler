@@ -55,7 +55,7 @@ if [[ -n ${ICE[dl]} && ${ICE[dl]} != ink=[-/[:alnum:]]* ]]; then
   local dl hd tl
   for dl ( $dls ) {
     srcdst=( ${(@s.->.)dl} )
-    srcdst=( ${srcdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/} )
+    srcdst=( ${srcdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/} ) #`
     hd="" tl=""
 
     if [[ -n ${srcdst[2]} ]]; then
@@ -77,13 +77,13 @@ if [[ -n ${ICE[dl]} && ${ICE[dl]} != ink=[-/[:alnum:]]* ]]; then
 
     if ! .zinit-annex-patch-dl-download-file-stdout "${srcdst[1]}" >! "$tdir/$tl"; then
       if ! .zinit-annex-patch-dl-download-file-stdout "${srcdst[1]}" 1 >! "$tdir/$tl"; then
-        +zinit-message "{info}[{pre}patch-dl annex{info}]{error} Failed to download the URL {glob}${srcdst[1]}{rst}"
+        +zinit-message "{log-err} {ice}patch-dl{rst}: Failed to download the URL {glob}${srcdst[1]}{rst}"
         ret=1
       fi
     fi
 
     if (( !ret && !OPTS[opt_-q,--quiet] && ZINIT[annex-multi-flag:pull-active] == 2 )); then
-      +zinit-message "{info}[{pre}patch-dl annex{info}] {file}${tl}{rst} downloaded successfully"
+      +zinit-message "{log-msg} {ice}patch-dl{rst}: {file}${tl}{rst} downloaded successfully"
     fi
   }
 fi
@@ -91,14 +91,14 @@ fi
 if [[ -n "${ICE[patch]}" ]]; then
   local -a patches
   patches=( "${(s.;.)ICE[patch]}" )
-  patches=( "${patches[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
+  patches=( "${patches[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )  # `
 
   local pch
   for pch ( $patches ) {
     @zinit-substitute pch
 
     if (( !OPTS[opt_-q,--quiet] && ZINIT[annex-multi-flag:pull-active] == 2 )); then
-      +zinit-message "{info}[{pre}patch-dl annex{info}]{rst} Applying patch {pname}${pch}{rst}"
+      +zinit-message "{log-msg} {ice}patch-dl{rst}: Applying patch {pname}${pch}{rst}"
     fi
 
     (
