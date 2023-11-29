@@ -1,63 +1,52 @@
+
 emulate -RL zsh
 setopt extendedglob noshortloops typesetsilent warncreateglobal
-
 if [[ "$1" = plugin ]]; then
     local type="$1" user="$2" plugin="$3" id_as="$4" dir="$5"
 else
     local type="$1" url="$2" id_as="$3" dir="$4"
 fi
-
-# FUNCTION: .zinit-annex-patch-dl-download-file-stdout {{{
-# Downloads file to stdout. Used by snippet loading.
-# Supports following backend commands: curl, wget, lftp, lynx.
-.zinit-annex-patch-dl-download-file-stdout() {
+.zinit-annex-patch-dl-download-file-stdout () {
     local url="$1" restart="$2"
-
     setopt localoptions localtraps
-
     if (( restart )); then
         if (( !${path[(I)/usr/local/bin]} )); then
-            path+=( "/usr/local/bin" );
+            path+=("/usr/local/bin")
             trap "path[-1]=()" EXIT
         fi
-
-        if (( ${+commands[curl]} )) then
+        if (( ${+commands[curl]} )); then
             command curl -fsSL "$url" || return 1
         elif (( ${+commands[wget]} )); then
             command wget -q "$url" -O - || return 1
         elif (( ${+commands[lftp]} )); then
             command lftp -c "cat $url" || return 1
-            elif (( ${+commands[lynx]} )) then
+        elif (( ${+commands[lynx]} )); then
             command lynx -source "$url" || return 1
         else
             return 2
         fi
     else
-        if type curl 2>/dev/null 1>&2; then
+        if type curl 2> /dev/null >&2; then
             command curl -fsSL "$url" || return 1
-        elif type wget 2>/dev/null 1>&2; then
+        elif type wget 2> /dev/null >&2; then
             command wget -q "$url" -O - || return 1
-        elif type lftp 2>/dev/null 1>&2; then
+        elif type lftp 2> /dev/null >&2; then
             command lftp -c "cat $url" || return 1
         else
             .zinit-annex-patch-dl-download-file-stdout "$url" "1"
             return $?
         fi
     fi
-
     return 0
-} # }}}
-
+}
 if [[ -n ${ICE[dl]} && ${ICE[dl]} != ink=[-/[:alnum:]]* ]]; then
     local -a dls srcdst
-    dls=( "${(s.;.)ICE[dl]}" )
-
+    dls=("${(s.;.)ICE[dl]}")
     local dl hd tl
-    for dl ( $dls ); do
-        srcdst=( ${(@s.->.)dl} )
-        srcdst=( ${srcdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/} )
+    for dl in $dls; do
+        srcdst=(${(@s.->.)dl})
+        srcdst=(${srcdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/})
         hd="" tl=""
-
         if [[ -n ${srcdst[2]} ]]; then
             @zinit-substitute 'srcdst[2]'
             hd="${srcdst[2]:h}"
@@ -67,47 +56,35 @@ if [[ -n ${ICE[dl]} && ${ICE[dl]} != ink=[-/[:alnum:]]* ]]; then
             hd="."
             tl="${${srcdst[1]%%\?*}:t}"
         fi
-
         local tdir="${${(M)hd:#/*}:-$dir/$hd}"
-
-        # Create the destination directory
         command mkdir -p "$tdir"
-
         local ret=0
-
-        if ! .zinit-annex-patch-dl-download-file-stdout "${srcdst[1]}" >! "$tdir/$tl"; then
-            if ! .zinit-annex-patch-dl-download-file-stdout "${srcdst[1]}" 1 >! "$tdir/$tl"; then
-                +zinit-message "{e} patch-dl-annex: Failed to download the URL {glob}${srcdst[1]}{rst}"
+        if ! .zinit-annex-patch-dl-download-file-stdout "${srcdst[1]}" >| "$tdir/$tl"; then
+            if ! .zinit-annex-patch-dl-download-file-stdout "${srcdst[1]}" 1 >| "$tdir/$tl"; then
+                +zi-log "{e} {b}patch-dl annex{rst}: Failed to download the URL {glob}${srcdst[1]}{rst}"
                 ret=1
             fi
         fi
-
         if (( !ret && !OPTS[opt_-q,--quiet] && ZINIT[annex-multi-flag:pull-active] == 2 )); then
-            +zinit-message "{m} patch-dl-annex: {file}$tl{rst} downloaded successfully"
+            +zi-log "{m} {b}patch-dl annex{rst}: {file}$tl{rst} downloaded successfully"
         fi
     done
 fi
-
 if [[ -n "${ICE[patch]}" ]]; then
     local -a patches
-    patches=( "${(s.;.)ICE[patch]}" )
-    patches=( "${patches[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
-
+    patches=("${(s.;.)ICE[patch]}")
+    patches=("${patches[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}")
     local pch
-    for pch ( $patches ) {
+    for pch in $patches; do
         @zinit-substitute pch
-
         if (( !OPTS[opt_-q,--quiet] && ZINIT[annex-multi-flag:pull-active] == 2 )); then
-            +zinit-message "{m} patch-dl-annex: Applying patch {pname}$pch{rst}"
+            +zi-log "{m} {b}patch-dl annex{rst}: Applying patch {pname}$pch{rst}"
         fi
-
         (
             builtin cd -q "$dir"
             builtin print -nP -- "%F{220}"
             command patch -s -N -p1 -i "$pch"
             builtin print -nP -- "%f"
         )
-    }
+    done
 fi
-
-# vim:ft=zsh:sw=2:sts=2:et
