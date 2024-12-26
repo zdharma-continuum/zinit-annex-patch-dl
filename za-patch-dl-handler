@@ -50,7 +50,8 @@ fi
 
 if [[ -n ${ICE[dl]} && ${ICE[dl]} != ink=[-/[:alnum:]]* ]]; then
     local -a dls srcdst
-    dls=( "${(s.;.)ICE[dl]}" )
+    dls=( "${(s.;.)ICE[dl]}" ) # Strip leading and trailing spaces, but not new lines
+    dls=( "${dls[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" ) # Strip leading and trailing spaces inlcuding new lines; empty strings are removed
 
     local dl hd tl
     for dl ( $dls ); do
@@ -92,8 +93,8 @@ fi
 
 if [[ -n "${ICE[patch]}" ]]; then
     local -a patches
-    patches=( "${(s.;.)ICE[patch]}" )
-    patches=( "${patches[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
+    patches=( "${(s.;.)ICE[patch]}" ) # Strip leading and trailing spaces, but not new lines
+    patches=( "${patches[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" ) # Strip leading and trailing spaces inlcuding new lines; empty strings are removed
 
     local pch
     for pch ( $patches ) {
